@@ -1,5 +1,5 @@
 // Created By MiggySmallz
-// Date: November 25 2021 @ 4:00 EST
+// Date: November 25 2021 @ 23:00 EST
 
 const { truncateSync } = require('fs');
 const { truncate } = require('fs/promises');
@@ -35,19 +35,33 @@ async function initializeBrowser()
         
         
         const els = await page.$$('div.css-10yi4wi');
-        console.log(`There are ${els.length} lions in this range\n`);
-
+        
+        let buyNowCount = 0;
+        let auctionCount = 0;
         for (let i = 0; i < els.length; i++) {
             const lionName = await els[i].$eval('div[class^=NftCard_nftName]', div => div.textContent)
             const lionBuyType = await els[i].$eval('div[class=css-1phsfx]', div => div.textContent)
             const lionPrice = await els[i].$eval('div[class=css-qhhkrs]', div => div.textContent)
             const lionLikes = await els[i].$eval('div[class=css-1nhwfv9]', div => div.textContent)
             
+            if (lionBuyType == "BUY NOW"){
+                buyNowCount++;
+            }
+            if (lionBuyType == "AUCTION"){
+                auctionCount++;
+            }
+            
             console.log("Name:" + lionName);
             console.log("Buy Type:" + lionBuyType);
             console.log("Price:" + lionPrice);
             console.log("Likes:" + lionLikes + "\n");
         }
+
+        console.log(`There are ${els.length} lions in this range`);
+        console.log(`${buyNowCount} are BUY NOW`);
+        console.log(`${auctionCount} are AUCTION`);
+
+
         await browser.close();
     }
     catch(err) {
